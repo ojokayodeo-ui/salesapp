@@ -246,6 +246,8 @@ export default function LeadsPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const LIMIT = 25;
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -253,13 +255,17 @@ export default function LeadsPage() {
     if (search) params.set("search", search);
     if (filterSource) params.set("source", filterSource);
     if (filterStatus) params.set("status", filterStatus);
+    params.set("page", String(page));
+    params.set("limit", String(LIMIT));
     const res = await fetch(`/api/leads?${params}`);
     const data = await res.json();
     setLeads(data.leads ?? []);
     setTotal(data.total ?? 0);
     setLoading(false);
-  }, [search, filterSource, filterStatus]);
+  }, [search, filterSource, filterStatus, page]);
 
+  // Reset to page 1 when filters change
+  useEffect(() => { setPage(1); }, [search, filterSource, filterStatus]);
   useEffect(() => { load(); }, [load]);
 
   const deleteLead = async (id: string) => {
@@ -436,6 +442,53 @@ export default function LeadsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {total > LIMIT && (
+        <div className="flex items-center justify-between px-6 py-3 border-t border-slate-200 bg-white">
+          <p className="text-xs text-slate-500">
+            Showing {(page - 1) * LIMIT + 1}–{Math.min(page * LIMIT, total)} of {total} leads
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="btn-secondary btn-sm disabled:opacity-40"
+            >
+              Previous
+            </button>
+            {Array.from({ length: Math.ceil(total / LIMIT) }, (_, i) => i + 1)
+              .filter((p) => p === 1 || p === Math.ceil(total / LIMIT) || Math.abs(p - page) <= 1)
+              .reduce<(number | "…")[]>((acc, p, i, arr) => {
+                if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("…");
+                acc.push(p);
+                return acc;
+              }, [])
+              .map((p, i) =>
+                p === "…" ? (
+                  <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-xs">…</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p as number)}
+                    className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
+                      page === p ? "bg-brand-600 text-white" : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+            <button
+              onClick={() => setPage((p) => Math.min(Math.ceil(total / LIMIT), p + 1))}
+              disabled={page * LIMIT >= total}
+              className="btn-secondary btn-sm disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {showAdd && <AddLeadModal onClose={() => setShowAdd(false)} onSaved={load} />}
       {showImport && <ImportModal onClose={() => setShowImport(false)} onImported={load} />}
