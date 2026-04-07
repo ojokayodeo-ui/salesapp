@@ -20,8 +20,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(body.isActive !== undefined && { isActive: body.isActive }),
         ...(body.description !== undefined && { description: body.description }),
         ...(body.trigger !== undefined && { trigger: body.trigger }),
-        ...(body.triggerConfig !== undefined && { triggerConfig: JSON.stringify(body.triggerConfig) }),
-        ...(body.actions !== undefined && { actions: JSON.stringify(body.actions) }),
+        ...(body.triggerConfig !== undefined && { triggerConfig: body.triggerConfig }),
+        ...(body.actions !== undefined && { actions: body.actions }),
       },
     });
 

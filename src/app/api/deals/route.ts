@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
         dealId: deal.id,
         leadId: deal.leadId || undefined,
         userId: session.user.id,
-        metadata: JSON.stringify({ stageId: deal.stageId, stageName: deal.stage.name }),
+        metadata: { stageId: deal.stageId, stageName: deal.stage.name },
       },
     });
 

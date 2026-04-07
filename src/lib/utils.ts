@@ -93,10 +93,11 @@ export function truncate(str: string, maxLen: number): string {
   return str.slice(0, maxLen) + "…";
 }
 
-export function parseTags(tagsJson: string): string[] {
-  try {
-    return JSON.parse(tagsJson);
-  } catch {
-    return [];
+// tags is a Json column — Prisma returns it as unknown/array, never a raw string in prod
+export function parseTags(tags: unknown): string[] {
+  if (Array.isArray(tags)) return tags as string[];
+  if (typeof tags === "string") {
+    try { return JSON.parse(tags); } catch { return []; }
   }
+  return [];
 }

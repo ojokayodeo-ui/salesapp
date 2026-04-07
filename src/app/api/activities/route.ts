@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 const CreateActivitySchema = z.object({
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
         ...data,
         userId: session.user.id,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-        metadata: JSON.stringify(data.metadata),
+        metadata: data.metadata as Prisma.InputJsonValue,
       },
       include: {
         user: { select: { id: true, name: true, email: true } },

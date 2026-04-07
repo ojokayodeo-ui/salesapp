@@ -75,12 +75,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           dealId: id,
           leadId: deal.leadId || undefined,
           userId: session.user.id,
-          metadata: JSON.stringify({
+          metadata: {
             fromStageId: deal.stageId,
             fromStageName: deal.stage.name,
             toStageId: body.stageId,
             toStageName: newStage?.name,
-          }),
+          },
         },
       });
     }
@@ -94,7 +94,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           dealId: id,
           leadId: deal.leadId || undefined,
           userId: session.user.id,
-          metadata: JSON.stringify({ status: body.status }),
+          metadata: { status: body.status },
         },
       });
     }

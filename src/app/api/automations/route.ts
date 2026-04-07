@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 const CreateAutomationSchema = z.object({
@@ -37,8 +38,8 @@ export async function POST(req: NextRequest) {
     const automation = await prisma.automation.create({
       data: {
         ...data,
-        triggerConfig: JSON.stringify(data.triggerConfig),
-        actions: JSON.stringify(data.actions),
+        triggerConfig: data.triggerConfig as Prisma.InputJsonValue,
+        actions: data.actions as Prisma.InputJsonValue,
         organizationId: session.user.organizationId,
       },
     });

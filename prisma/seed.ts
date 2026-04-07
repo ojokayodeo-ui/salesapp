@@ -91,14 +91,14 @@ async function main() {
 
   // Leads
   const leadsData = [
-    { name: "Jordan Lee",    email: "jordan@techcorp.io",  company: "TechCorp",    source: "cold",     tags: '["SaaS","B2B"]',    score: 82 },
-    { name: "Priya Sharma",  email: "priya@growfast.com",  company: "GrowFast",    source: "inbound",  tags: '["Agency","SMB"]',   score: 91 },
-    { name: "Tom Walters",   email: "tom@boldmedia.net",   company: "Bold Media",  source: "referral", tags: '["Media","ICP"]',    score: 76 },
-    { name: "Fatima Hassan", email: "fatima@logixco.com",  company: "Logix Co",    source: "form",     tags: '["Logistics","B2B"]',score: 64 },
-    { name: "Ethan Brooks",  email: "ethan@scale9.io",     company: "Scale9",      source: "cold",     tags: '["FinTech","SaaS"]', score: 88 },
-    { name: "Li Wei",        email: "li@cloudwave.ai",     company: "CloudWave",   source: "inbound",  tags: '["AI","Enterprise"]',score: 95 },
-    { name: "Anna Novak",    email: "anna@designhub.co",   company: "DesignHub",   source: "cold",     tags: '["Design","SMB"]',   score: 55 },
-    { name: "Carlos Mendez", email: "carlos@nexapro.com",  company: "NexaPro",     source: "referral", tags: '["Enterprise","ICP"]',score: 79 },
+    { name: "Jordan Lee",    email: "jordan@techcorp.io",  company: "TechCorp",    source: "cold",     tags: ["SaaS","B2B"],        score: 82 },
+    { name: "Priya Sharma",  email: "priya@growfast.com",  company: "GrowFast",    source: "inbound",  tags: ["Agency","SMB"],       score: 91 },
+    { name: "Tom Walters",   email: "tom@boldmedia.net",   company: "Bold Media",  source: "referral", tags: ["Media","ICP"],        score: 76 },
+    { name: "Fatima Hassan", email: "fatima@logixco.com",  company: "Logix Co",    source: "form",     tags: ["Logistics","B2B"],    score: 64 },
+    { name: "Ethan Brooks",  email: "ethan@scale9.io",     company: "Scale9",      source: "cold",     tags: ["FinTech","SaaS"],     score: 88 },
+    { name: "Li Wei",        email: "li@cloudwave.ai",     company: "CloudWave",   source: "inbound",  tags: ["AI","Enterprise"],    score: 95 },
+    { name: "Anna Novak",    email: "anna@designhub.co",   company: "DesignHub",   source: "cold",     tags: ["Design","SMB"],       score: 55 },
+    { name: "Carlos Mendez", email: "carlos@nexapro.com",  company: "NexaPro",     source: "referral", tags: ["Enterprise","ICP"],   score: 79 },
   ];
 
   // Clear existing leads for this org to avoid dups on re-seed
@@ -155,35 +155,35 @@ async function main() {
       name: "Follow-up after no reply (3 days)",
       description: "Automatically create a follow-up task when a deal has had no activity for 3 days.",
       trigger: "time_delay",
-      triggerConfig: JSON.stringify({ delayDays: 3, event: "no_activity" }),
-      actions: JSON.stringify([{ type: "create_task", config: { title: "Follow up with lead", dueInDays: 1 } }]),
+      triggerConfig: { delayDays: 3, event: "no_activity" },
+      actions: [{ type: "create_task", config: { title: "Follow up with lead", dueInDays: 1 } }],
     },
     {
       name: "Welcome sequence on New Lead",
       description: "Send a welcome email sequence when a deal enters the New Lead stage.",
       trigger: "stage_enter",
-      triggerConfig: JSON.stringify({ stageId: "stage-1" }),
-      actions: JSON.stringify([
+      triggerConfig: { stageId: "stage-1" },
+      actions: [
         { type: "send_email", config: { templateId: "welcome", delayHours: 0 } },
         { type: "create_task", config: { title: "Research lead's company", dueInDays: 1 } },
-      ]),
+      ],
     },
     {
       name: "Proposal reminder",
       description: "Remind sales rep 2 days before proposal expiry.",
       trigger: "time_delay",
-      triggerConfig: JSON.stringify({ delayDays: -2, event: "proposal_expiry" }),
-      actions: JSON.stringify([{ type: "notify_rep", config: { message: "Proposal expiring soon! Follow up now." } }]),
+      triggerConfig: { delayDays: -2, event: "proposal_expiry" },
+      actions: [{ type: "notify_rep", config: { message: "Proposal expiring soon! Follow up now." } }],
     },
     {
       name: "Win celebration & invoice",
       description: "Trigger invoice creation and notify team when deal is Closed Won.",
       trigger: "deal_won",
-      triggerConfig: JSON.stringify({}),
-      actions: JSON.stringify([
-        { type: "notify_team", config: { message: "Deal closed! 🎉" } },
+      triggerConfig: {},
+      actions: [
+        { type: "notify_team", config: { message: "Deal closed!" } },
         { type: "create_task", config: { title: "Send invoice to client", dueInDays: 1 } },
-      ]),
+      ],
     },
   ];
 

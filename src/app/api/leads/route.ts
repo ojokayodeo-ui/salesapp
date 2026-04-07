@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
           const lead = await prisma.lead.create({
             data: {
               ...data,
-              tags: JSON.stringify(data.tags),
               organizationId: session.user.organizationId,
             },
           });
@@ -92,7 +91,6 @@ export async function POST(req: NextRequest) {
     const lead = await prisma.lead.create({
       data: {
         ...data,
-        tags: JSON.stringify(data.tags),
         organizationId: session.user.organizationId,
       },
     });

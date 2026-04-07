@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -49,7 +49,7 @@ model Lead {
   title          String?
   source         String   @default("manual") // cold, inbound, referral, form, csv, manual
   status         String   @default("new")    // new, contacted, qualified, disqualified
-  tags           String   @default("[]")     // JSON array
+  tags           Json     @default("[]")
   notes          String?
   linkedinUrl    String?
   score          Int      @default(0)        // 0-100 AI-computed lead score
@@ -129,7 +129,7 @@ model Activity {
   lead        Lead?     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   userId      String
   user        User      @relation(fields: [userId], references: [id])
-  metadata    String    @default("{}") // JSON for extra data
+  metadata    Json      @default("{}")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -157,8 +157,8 @@ model Automation {
   name           String
   description    String?
   trigger        String   // stage_enter, stage_exit, time_delay, no_reply, deal_created, deal_won, deal_lost
-  triggerConfig  String   @default("{}") // JSON: { stageId, delayDays, etc. }
-  actions        String   @default("[]") // JSON array: [{ type, config }]
+  triggerConfig  Json     @default("{}")
+  actions        Json     @default("[]")
   isActive       Boolean  @default(true)
   executionCount Int      @default(0)
   organizationId String

@@ -41,8 +41,7 @@ export async function POST(req: NextRequest) {
 
   for (const da of pending) {
     try {
-      const actions: { type: string; config: Record<string, unknown> }[] =
-        JSON.parse(da.automation.actions);
+      const actions = da.automation.actions as { type: string; config: Record<string, unknown> }[];
 
       for (const action of actions) {
         await executeAction(action, da.deal);
@@ -85,7 +84,7 @@ export async function POST(req: NextRequest) {
 
     for (const deal of openDeals) {
       for (const auto of timeDelayAutomations) {
-        const config: Record<string, unknown> = JSON.parse(auto.triggerConfig);
+        const config = auto.triggerConfig as Record<string, unknown>;
         const delayDays = (config.delayDays as number) ?? 3;
 
         // Check if already scheduled for this deal+automation
@@ -142,7 +141,7 @@ async function executeAction(
           dealId: deal.id,
           leadId: deal.leadId ?? undefined,
           userId: deal.ownerId ?? deal.owner?.id ?? "system",
-          metadata: JSON.stringify({ automationCreated: true }),
+          metadata: { automationCreated: true },
         },
       });
       break;
@@ -170,7 +169,7 @@ async function executeAction(
           status: "pending",
           dealId: deal.id,
           userId: deal.ownerId ?? deal.owner?.id ?? "system",
-          metadata: JSON.stringify({ automationNotification: true }),
+          metadata: { automationNotification: true },
         },
       });
       break;
